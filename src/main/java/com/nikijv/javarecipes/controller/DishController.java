@@ -4,6 +4,7 @@ import com.nikijv.javarecipes.dto.RecipeDto;
 import com.nikijv.javarecipes.model.Dish;
 import com.nikijv.javarecipes.model.Kitchen;
 import com.nikijv.javarecipes.model.Recipe;
+import com.nikijv.javarecipes.repository.DishRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class DishController {
+    private final DishRepository dishRepository;
+
+    public DishController(DishRepository dishRepository) {
+        this.dishRepository = dishRepository;
+    }
+
     List<Dish> dishes = new ArrayList<Dish>(List.of(
         new Dish (1, "D1",
                 new Recipe(1, "R1", "C1", "D1", "V1", new ArrayList<>(List.of("Comp11", "Comp12")),
@@ -46,10 +53,12 @@ public class DishController {
                             new Kitchen(2, "K2", 12)))
 
     ));
+
     // Task 1
     @GetMapping("/dishes")
     public ResponseEntity<List<Dish>> getDishes() {
-        return ResponseEntity.ok(dishes);
+        List<Dish> dbDishes = dishRepository.findAllDishes();
+        return ResponseEntity.ok(dbDishes);
     }
 
     @GetMapping("/recipe-random")
