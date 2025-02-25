@@ -1,7 +1,7 @@
 package com.nikijv.javarecipes.repository;
 
 import com.nikijv.javarecipes.model.Dish;
-import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,9 +9,10 @@ import java.util.List;
 
 @Repository
 public interface DishRepository extends CrudRepository<Dish, Integer> {
-    @Query("""
-            select* from dishes
-            inner join recipes on dishes.recipe_id = recipes.id
-            inner join kitchens on recipes.kitchen_id = kitchens.id;""")
+    @Query(value = """
+        SELECT d.* FROM dishes d
+        INNER JOIN recipes r ON d.recipe_id = r.id
+        INNER JOIN kitchens k ON r.kitchen_id = k.id
+        """, nativeQuery = true)
     List<Dish> findAllDishes();
 }

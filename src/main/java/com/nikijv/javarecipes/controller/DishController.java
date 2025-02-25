@@ -57,12 +57,13 @@ public class DishController {
     // Task 1
     @GetMapping("/dishes")
     public ResponseEntity<List<Dish>> getDishes() {
-        List<Dish> dbDishes = dishRepository.findAllDishes();
-        return ResponseEntity.ok(dbDishes);
+        List<Dish> dishes = dishRepository.findAllDishes();
+        return ResponseEntity.ok(dishes);
     }
 
     @GetMapping("/recipe-random")
     public ResponseEntity<Recipe> getRandomRecipe() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         Random random = new Random();
         int randomId = random.nextInt(1, dishes.size() + 1);
         Optional<Recipe> recipeOpt = dishes.stream()
@@ -76,6 +77,7 @@ public class DishController {
 
     @GetMapping("/recipe/by/component/{comp}")
     public ResponseEntity<Recipe> getRecipeByComponent(@PathVariable String comp) {
+        List<Dish> dishes = dishRepository.findAllDishes();
         Optional<Recipe> recipeOpt = dishes.stream()
                 .map(Dish::getRecipe)
                 .filter(r -> r.getComponents().contains(comp))
@@ -87,6 +89,7 @@ public class DishController {
 
     @GetMapping("/recipe/{id}")
     public ResponseEntity<Recipe> getRecipe(@PathVariable int id) {
+        List<Dish> dishes = dishRepository.findAllDishes();
         Optional<Recipe> recipeOpt = dishes.stream()
                 .map(Dish::getRecipe)
                 .filter(r -> r.getId() == id)
@@ -98,6 +101,7 @@ public class DishController {
 
     @GetMapping("/recipe-short/{id}")
     public ResponseEntity<RecipeDto> getRecipeShort(@PathVariable int id) {
+        List<Dish> dishes = dishRepository.findAllDishes();
         Optional<Recipe> recipeOpt = dishes.stream()
                 .map(Dish::getRecipe)
                 .filter(r -> r.getId() == id)
@@ -116,6 +120,7 @@ public class DishController {
     // Task 2
     @GetMapping("/recipe-categories")
     public ResponseEntity<List<String>> getRecipeCategories() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<String> categories = dishes.stream()
                 .map(dish -> dish.getRecipe().getCategory())
                 .distinct()
@@ -126,6 +131,7 @@ public class DishController {
 
     @GetMapping ("/top3/recipe/by/name")
     public ResponseEntity<List<Recipe>> getTop3RecipeByName() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<Recipe> top3Recipes = dishes.stream()
                 .map(Dish::getRecipe)
                 .sorted(Comparator.comparing(Recipe::getName))
@@ -137,6 +143,7 @@ public class DishController {
 
     @GetMapping ("/random-3-dishes")
     public ResponseEntity<List<Dish>> getRandom3Dishes() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<Dish> shuffledDishes = new ArrayList<>(dishes);
         Collections.shuffle(shuffledDishes);
         return ResponseEntity.ok(shuffledDishes.stream().limit(3).toList());
@@ -144,6 +151,7 @@ public class DishController {
 
     @GetMapping ("/random-1-dish")
     public ResponseEntity<Dish> getRandom1Dish() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<Dish> shuffledDishes = new ArrayList<>(dishes);
         Collections.shuffle(shuffledDishes);
         return ResponseEntity.ok(shuffledDishes.getFirst());
@@ -151,6 +159,7 @@ public class DishController {
 
     @GetMapping ("/10-specific-dishes/{comp}")
     public ResponseEntity<List<Dish>> tenSpecificDishes(@PathVariable String comp) {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<Dish> filteredDishes = dishes.stream()
                 .filter(dish -> !dish.getRecipe().getComponents().contains(comp))
                 .limit(10)
@@ -161,6 +170,7 @@ public class DishController {
     // Task 3
     @GetMapping ("/top3/recipe/by/kitchen/{kitch}")
     public ResponseEntity<List<Recipe>> getTop3RecipeByKitchen(@PathVariable String kitch) {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<Recipe> top3Recipes = dishes.stream()
                 .map(Dish::getRecipe)
                 .filter(recipe -> recipe.getKitchen().getName().equals(kitch))
@@ -171,6 +181,7 @@ public class DishController {
 
     @GetMapping ("/top3/most-popular-kitchen")
     public ResponseEntity<List<Kitchen>> getTop3PopularKitchen() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<Kitchen> top3Kitchens = dishes.stream()
                 .map(dish -> dish.getRecipe().getKitchen())
                 .collect(Collectors.groupingBy(k -> k, Collectors.counting()))
@@ -184,6 +195,7 @@ public class DishController {
 
     @GetMapping ("/top3/categories")
     public ResponseEntity<List<String>> getTop3Categories() {
+        List<Dish> dishes = dishRepository.findAllDishes();
         List<String> top3Categories = dishes.stream()
                 .map(dish -> dish.getRecipe().getCategory())
                 .distinct()
